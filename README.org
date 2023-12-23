@@ -1,0 +1,30 @@
+#+title: Geant4 Examples 
+
+This is a personal collection of [[http://cern.ch/geant4][Geant4]] example applications developed to demonstrate useful functionality in the Geant4 toolkit.
+
+* Example applications
+
+The examples are briefly described below.
+More information can be found in the README in the example's directory.
+
+** A1
+
+This example adds some useful features to the basic example ~B1~ distributed with Geant4:
+- Set and record the seeds.
+- Use GPS instead of particle gun.
+- Score information in ntuples and histograms.
+- Use physics list files.
+
+** A2
+
+Example A2 adds a radioactive source to example A1. 
+It also demonstrates confinement of a source to a volume.
+
+* Testing
+
+The examples are tested on Geant4 releases from 11.1.1 to 11.2.0 inclusive (see ~run-tests.sh~).
+
+* License
+
+This product includes software developed by Members of the Geant4 Collaboration (http://cern.ch/geant4).
+Modifications by Jake Forster are licensed under the MIT License. 

@@ -1,0 +1,10 @@
+/run/initialize
+/gps/position 0 0 0 cm
+/gps/pos/type Volume
+/gps/pos/shape Sphere
+/gps/pos/radius 4.4 m  # must contain all of confine volume
+/gps/pos/confine InnerSpherePhysical
+/gps/particle ion
+/gps/energy 0 keV
+/gps/ion 9 18  # F-18
+/run/beamOn 1000

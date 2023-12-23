@@ -1,0 +1,81 @@
+#+title: Example A2
+
+Example A2 adds a radioactive source to example A1.
+
+* Differences from ~A1~ example
+
+** Physics list
+
+- In ~PhysicsList.cc~, added physics lists that simulate radioactive decay.
+  This was taken from the example ~basic/B3/B3a~ distributed with Geant4.
+
+*** TODO Alpha interactions
+
+Alpha decays produce alphas, so we should make sure we have appropriate alpha interactions in the simulation.
+Currently, alphas undergo =msc=, =ionIoni=, and =ionnuc= from the physics list =G4EmStandardPhysics_option4=.
+Is this satisfactory?
+
+** Detector construction
+
+The geometry consists of a sphere within a sphere, inside a cube-shaped world.
+
+** Macro file
+
+*** Specifying the initial radionuclide
+
+The source is a nucleus at rest.
+I.e.,
+#+begin_example
+/run/beamOn 10
+#+end_example
+will simulate 10 nuclei at rest.
+If the nucleus is unstable, it will decay.
+If it has radioactive daughters, they will also decay.
+
+The initial nuclide is specified by its atomic number, mass number, and optionally excitation energy (the default is 0, corresponding to the ground state).
+For example, to simulate ^{32}P:
+#+begin_example
+/gps/ion 15 32  
+#+end_example
+
+To simulate an excited nucleus, the excited energy level needs to match the ENSDF database for the decay to proceed correctly.
+For example, to simulate ^{99m}Tc, which is at the excitation level of 142.683 keV (according to ENSDF), use:
+#+begin_example
+/gps/ion 43 99 0 142.683
+#+end_example
+
+*** Source distribution
+
+The source nuclei are positioned randomly and uniformly inside the inner sphere.
+
+**** Note on =/gps/pos/confine=
+
+The macro command =/gps/pos/confine= is used to confine events to a physical volume.
+Before invoking this command, specify a source distribution that extends beyond this physical volume, such that the physical volume is fully contained in the source region.
+
+For example, in ~run1.mac~ the initial source distribution is a sphere at the origin with a radius of 4.4 m, then the source is confined to the inner sphere:
+#+begin_example
+/gps/pos/radius 4.4 m  
+/gps/pos/confine InnerSpherePhysical
+#+end_example
+From the ~DetectorConstruction.cc~, the inner sphere is at the origin and has a radius of 1 m. Thus the inner sphere is fully contained within the initial source distribution.
+It is also a good idea to make sure the initial source distribution is contained within the world volume. In this example, the world is a cube of side length 9.2 m, so this constraint is also satisfied.
+
+** Stepping action
+
+*** Printing decay information
+
+In the ~SteppingAction.cc~, the following information is printed during the simulation: 
+- The nuclide that decayed and its kinetic energy when it decayed.
+- The decay products and their initial kinetic energies.
+
+*** Limiting the decay chain
+
+Without intervention, the physics lists used in this example simulate the full decay chain from the initial nuclide to stable products.
+Even daughters with really, really long half-lives will decay in the simulation.
+For example, if the initial nucleus is ^{99m}Tc, most of the decays are to Tc, which has a half-life of 2.111 $\times$ 10^{5} y. Each Tc nucleus produced in the simulation will \beta decay to ^{99}Ru.
+
+In the ~SteppingAction.cc~, a strategy is implemented to simulate the decay of the initial unstable nucleus only.
+Once a daughter nucleus has deexcitated to the ground state and lost its kinetic energy, its track is manually killed in the user stepping action, thus preventing the simulation of subsequent decays.
+*Beware*: This strategy assumes the daughters do not undergo unwanted (non-isomeric) decays from excited states!
+

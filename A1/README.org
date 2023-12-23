@@ -1,0 +1,49 @@
+#+title: Example A1
+
+This example adds some useful features to the basic example ~B1~ distributed with Geant4.
+
+* Changes to ~basic/B1~ example
+
+** Physics list
+
+- Added file ~PhysicsList.hh~.
+- Added file ~PhysicsList.cc~, use physics list =G4EmStandardPhysics_option4=.
+- In main file ~exampleB1.cc~, added physics list to run manager.
+
+** Analysis
+
+- Added file ~Analysis.hh~, specified CSV format for the analysis output (i.e. histograms and ntuple).
+- In ~RunAction.cc~, create histograms and ntuple in run action constructor, open the output files in the begin of run action, write to the output files and close them in the end of run action.
+- In ~SteppingAction.cc~, fill the histograms and ntuple in the user stepping action.
+
+** Stepping action
+
+- Demonstrate use of assert statement.
+
+** Main file
+
+- Report whether asserts are enabled for the run.
+- Generate unique seeds each run and write them to a file ~seeds.txt~ in the build directory. These seeds can be used to reproduce a run (e.g. for debugging).
+
+** General particle source
+
+- In ~PrimaryGeneratorAction.hh~ and ~PrimaryGeneratorAction.cc~, use general particle source (GPS) instead of particle gun. GPS has more features.
+- In ~vis.mac~ and ~run1.mac~, use =/gps/= commands.
+
+** Detector construction
+
+- Included the strings "solid", "logic", and "physical" in the name strings for the respective volumes. 
+
+* Usage
+
+To run in interactive mode with visualisation:
+#+begin_src sh
+  ./exampleB1 
+#+end_src
+
+This runs ~init_vis.mac~ then ~vis.mac~, before passing control over to the user interface.
+
+To run in batch mode (i.e. without user interaction):
+#+begin_src sh
+  ./exampleB1 run1.mac
+#+end_src
